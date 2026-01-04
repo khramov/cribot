@@ -1,0 +1,3 @@
+ticker,plugin,enabled,threshold_type,threshold_value,target_value,notes
+SBER,price,true,below,1000,300,Should verify price > 0
+USDRUB_TOM,fx,true,above,10,,Should verify rate > 0

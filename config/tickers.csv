@@ -1,0 +1,6 @@
+ticker,plugin,enabled,threshold_type,threshold_value,target_value,notes
+SBER,price,true,below,250,300,Брать на просадке
+USDRUB,fx,true,above,95,,Алерт на ослабление рубля
+VTBR,rsi,true,below,30,,Перепроданность
+GAZP,price,true,below,150,180,Газпром на просадке
+LKOH,rsi,false,below,25,,Отключено - наблюдаем

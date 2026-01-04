@@ -1,0 +1,21 @@
+# Yandex Cloud Function Configuration
+# Use with: yc serverless function version create
+
+function_name: cribot
+runtime: golang121
+entrypoint: cmd/function.Handler
+memory: 128m
+execution_timeout: 10s
+
+# Environment variables (set via --environment or YC console)
+# TELEGRAM_BOT_TOKEN: your-bot-token
+# TELEGRAM_CHAT_ID: your-chat-id
+# CONFIG_PATH: ./config/tickers.csv (default)
+# LOG_LEVEL: info (default)
+
+# Build command
+# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o function ./cmd/function
+
+# Resources
+resources:
+  memory: 134217728  # 128MB in bytes
