@@ -73,7 +73,7 @@ func (p *Plugin) Check(ctx context.Context, ticker string, cfg config.TickerConf
 	}, nil
 }
 
-// getRate tries to fetch from MOEX, falling back to mock on error.
+// getRate tries to fetch from MOEX. Fallback to mock only if CRIBOT_MOCK is true.
 func (p *Plugin) getRate(ctx context.Context, ticker string) (float64, error) {
 	// Map common pairs to MOEX format (e.g. USDRUB -> USDRUB_TOM)
 	moexTicker := ticker
@@ -87,11 +87,13 @@ func (p *Plugin) getRate(ctx context.Context, ticker string) (float64, error) {
 		return data.Last, nil
 	}
 
-	// Log error but continue with fallback
-	slog.Warn("moex api failed, using mock data", "ticker", ticker, "moex_ticker", moexTicker, "error", err)
+	// Falls back to mock only if explicitly enabled
+	if os.Getenv("CRIBOT_MOCK") == "true" {
+		slog.Warn("moex api failed, using mock data (CRIBOT_MOCK=true)", "ticker", ticker, "moex_ticker", moexTicker, "error", err)
+		return mockFXRate(ticker), nil
+	}
 
-	// Fallback to mock data
-	return mockFXRate(ticker), nil
+	return 0, fmt.Errorf("moex api error: %w", err)
 }
 
 // mockFXRate returns a mock exchange rate.

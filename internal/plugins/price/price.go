@@ -72,7 +72,7 @@ func (p *Plugin) Check(ctx context.Context, ticker string, cfg config.TickerConf
 	}, nil
 }
 
-// getPrice tries to fetch from MOEX, falling back to mock on error.
+// getPrice tries to fetch from MOEX. Fallback to mock only if CRIBOT_MOCK is true.
 func (p *Plugin) getPrice(ctx context.Context, ticker string) (float64, error) {
 	// Try MOEX API
 	data, err := p.client.GetStockPrice(ctx, ticker)
@@ -80,11 +80,13 @@ func (p *Plugin) getPrice(ctx context.Context, ticker string) (float64, error) {
 		return data.Last, nil
 	}
 
-	// Log error but continue with fallback
-	slog.Warn("moex api failed, using mock data", "ticker", ticker, "error", err)
+	// Falls back to mock only if explicitly enabled
+	if os.Getenv("CRIBOT_MOCK") == "true" {
+		slog.Warn("moex api failed, using mock data (CRIBOT_MOCK=true)", "ticker", ticker, "error", err)
+		return mockPrice(ticker), nil
+	}
 
-	// Fallback to mock data
-	return mockPrice(ticker), nil
+	return 0, fmt.Errorf("moex api error: %w", err)
 }
 
 // mockPrice returns a random price for testing.

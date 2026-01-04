@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"os"
 
 	"github.com/antonkhramov/cribot/internal/config"
 	"github.com/antonkhramov/cribot/internal/plugins"
@@ -23,9 +24,12 @@ func (p *Plugin) Name() string {
 }
 
 // Check evaluates the RSI condition for the given ticker.
-// Currently returns mock data for development.
 func (p *Plugin) Check(ctx context.Context, ticker string, cfg config.TickerConfig) (*plugins.Result, error) {
 	// TODO: Replace with real RSI calculation from market data
+	if os.Getenv("CRIBOT_MOCK") != "true" {
+		return nil, fmt.Errorf("RSI calculation not implemented (use CRIBOT_MOCK=true for dev data)")
+	}
+
 	currentRSI := mockRSI(ticker)
 
 	var triggered bool
