@@ -1,0 +1,18 @@
+# Binaries
+/function
+*.test
+*.out
+cribot
+
+# Environment
+.env
+*.env
+
+# System
+.DS_Store
+
+# Agent state (tracked config files will remain tracked)
+.gemini/
+.claude/
+.cursor/
+.windsurf/
