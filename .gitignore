@@ -16,3 +16,8 @@ cribot
 .claude/
 .cursor/
 .windsurf/
+.agent/
+.github/
+
+# Tools
+.tool-versions
