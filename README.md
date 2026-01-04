@@ -29,12 +29,21 @@ VTBR,rsi,true,below,30,,Перепроданность
 3. Напиши своему боту, затем получи chat_id через `https://api.telegram.org/bot<TOKEN>/getUpdates`
 
 ### 3. Локальный запуск
-
+ 
+**С уведомлениями в Telegram:**
 ```bash
 export TELEGRAM_BOT_TOKEN="your-token"
 export TELEGRAM_CHAT_ID="your-chat-id"
-go run ./cmd/function
+CGO_ENABLED=0 go run ./cmd/function
 ```
+
+**Режим консоли (без Telegram):**
+Если не указывать переменные окружения для Telegram, бот запустится в режиме консоли: он выведет все результаты проверок и алерты прямо в терминал.
+```bash
+CGO_ENABLED=0 go run ./cmd/function
+```
+*Примечание: `CGO_ENABLED=0` рекомендуется для стабильной работы на macOS.*
+
 
 ### 4. Деплой на Yandex Cloud
 
