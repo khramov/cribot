@@ -78,17 +78,22 @@ func Handler(ctx context.Context, request interface{}) Response {
 		return errorResponse(http.StatusInternalServerError, fmt.Sprintf("failed to load config: %v", err))
 	}
 
-	// Setup Telegram notifier
+	// Setup Notifier
 	tgConfig := notify.TelegramConfig{
 		BotToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
 		ChatID:   os.Getenv("TELEGRAM_CHAT_ID"),
 	}
 
-	if err := tgConfig.Validate(); err != nil {
-		return errorResponse(http.StatusInternalServerError, err.Error())
+	var notifier notify.Notifier
+	if tgConfig.BotToken != "" && tgConfig.ChatID != "" {
+		if err := tgConfig.Validate(); err != nil {
+			return errorResponse(http.StatusInternalServerError, err.Error())
+		}
+		notifier = notify.NewTelegram(tgConfig)
+	} else {
+		logger.Info("telegram credentials missing, using console notifier")
+		notifier = notify.NewConsole()
 	}
-
-	notifier := notify.NewTelegram(tgConfig)
 
 	// Create and run the engine
 	engine := core.New(cfg, notifier, logger)

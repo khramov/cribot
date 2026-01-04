@@ -152,13 +152,17 @@ func (e *Engine) checkOne(ctx context.Context, tc config.TickerConfig) CheckResu
 	// Get the plugin
 	plugin := plugins.Get(tc.Plugin)
 	if plugin == nil {
+		e.logger.Error("plugin not found", "plugin", tc.Plugin)
 		result.Error = fmt.Errorf("plugin '%s' not found", tc.Plugin)
 		return result
 	}
 
+	e.logger.Info("checking ticker", "ticker", tc.Ticker, "plugin", tc.Plugin, "threshold", fmt.Sprintf("%s %f", tc.ThresholdType, tc.ThresholdValue))
+
 	// Run the check
 	pluginResult, err := plugin.Check(ctx, tc.Ticker, tc)
 	if err != nil {
+		e.logger.Error("check failed", "ticker", tc.Ticker, "error", err)
 		result.Error = err
 		return result
 	}
@@ -166,6 +170,8 @@ func (e *Engine) checkOne(ctx context.Context, tc config.TickerConfig) CheckResu
 	result.Triggered = pluginResult.Triggered
 	result.Message = pluginResult.Message
 	result.Value = pluginResult.CurrentValue
+
+	e.logger.Info("check result", "ticker", tc.Ticker, "value", result.Value, "triggered", result.Triggered)
 
 	return result
 }
